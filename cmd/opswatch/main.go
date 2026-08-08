@@ -33,33 +33,54 @@ func main() {
 		}
 	}()
 
-	go listenKeys()
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				restoreTerminal()
+				ui.ExitAltScreen()
+				fmt.Fprintf(os.Stderr, "panic in listenKeys: %v\n", r)
+				os.Exit(1)
+			}
+		}()
+		listenKeys()
+	}()
 
 	for {
-		cpuUsage, err := system.CPUUsage()
-		if err != nil {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					restoreTerminal()
+					ui.ExitAltScreen()
+					fmt.Fprintf(os.Stderr, "panic: %v\n", r)
+					os.Exit(1)
+				}
+			}()
+
+			cpuUsage, err := system.CPUUsage()
+			if err != nil {
+				time.Sleep(time.Second)
+				return
+			}
+
+			memory, err := system.MemoryUsage()
+			if err != nil {
+				time.Sleep(time.Second)
+				return
+			}
+
+			disk, err := system.DiskUsage("/")
+			if err != nil {
+				time.Sleep(time.Second)
+				return
+			}
+
+			ui.AddCPUHistory(cpuUsage)
+			ui.AddRAMHistory(memory.Usage)
+
+			ui.Clear()
+			ui.RenderDashboard(cpuUsage, memory, disk)
+
 			time.Sleep(time.Second)
-			continue
-		}
-
-		memory, err := system.MemoryUsage()
-		if err != nil {
-			time.Sleep(time.Second)
-			continue
-		}
-
-		disk, err := system.DiskUsage("/")
-		if err != nil {
-			time.Sleep(time.Second)
-			continue
-		}
-
-		ui.AddCPUHistory(cpuUsage)
-		ui.AddRAMHistory(memory.Usage)
-
-		ui.Clear()
-		ui.RenderDashboard(cpuUsage, memory, disk)
-
-		time.Sleep(time.Second)
+		}()
 	}
 }
