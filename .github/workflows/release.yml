@@ -36,11 +36,9 @@ jobs:
 
       - name: Build deb
         run: |
-          dpkg-deb --build build/package \
-          build/opswatch_${{ github.ref_name }}_amd64.deb
+          dpkg-deb --build build/package build/opswatch_amd64.deb
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            build/*.deb
+          files: build/opswatch_amd64.deb
