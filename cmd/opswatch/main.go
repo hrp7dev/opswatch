@@ -2,7 +2,6 @@ package main
 import(
 	"fmt"
 	"os"
-	"log"
 	"time"
 	"github.com/hrp7dev/opswatch/internal/version"
 	"github.com/hrp7dev/opswatch/internal/system"
@@ -17,17 +16,17 @@ func main(){
 	for{
 		cpuUsage,err:=system.CPUUsage()
 		if err!=nil{
-			log.Println("CPU:",err)
+			ui.AddLog("error", fmt.Sprintf("CPU check failed: %v", err))
 			continue
 		}
 		memory,err:=system.MemoryUsage()
 		if err!=nil{
-			log.Println("MEMORY:",err)
+			ui.AddLog("warn", fmt.Sprintf("Memory check failed: %v", err))
 			continue
 		}
 		disk,err:=system.DiskUsage("/")
 		if err!=nil{
-			log.Println("DISK:",err)
+			ui.AddLog("warn", fmt.Sprintf("Disk check failed: %v", err))
 			continue
 		}
 		ui.AddCPUHistory(cpuUsage)

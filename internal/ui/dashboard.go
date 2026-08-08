@@ -65,6 +65,16 @@ func RenderDashboard(cpuUsage float64,memory system.MemoryStats,disk system.Disk
 		),
 	)
 
+	logsPanel:=lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("#475569")).Padding(1,2).Width(110)
+	logs:=logsPanel.Render(
+		lipgloss.JoinVertical(
+			lipgloss.Left,
+			labelStyle.Render("EVENT LOGS"),
+			"",
+			RenderLogs(8),
+		),
+	)
+
 	body:=lipgloss.JoinVertical(
 		lipgloss.Center,
 		header,
@@ -72,6 +82,8 @@ func RenderDashboard(cpuUsage float64,memory system.MemoryStats,disk system.Disk
 		stats,
 		"",
 		chart,
+		"",
+		logs,
 	)
 
 	fmt.Println(body)
