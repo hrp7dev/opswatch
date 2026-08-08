@@ -17,7 +17,11 @@ func main() {
 	}
 
 	ui.EnterAltScreen()
-	defer ui.ExitAltScreen()
+
+	defer func() {
+		ui.ExitAltScreen()
+		restoreTerminal()
+	}()
 
 	setupSignalHandler()
 
