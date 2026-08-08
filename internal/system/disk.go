@@ -18,8 +18,8 @@ func DiskUsage(path string) (DiskStats, error) {
 	}
 	return DiskStats{
 		Total: usage.Total,
-		Used: usage.Used,
-		Free: usage.Free,
+		Used:  usage.Used,
+		Free:  usage.Free,
 		Usage: usage.UsedPercent,
 	}, nil
 }

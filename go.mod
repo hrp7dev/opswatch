@@ -5,6 +5,8 @@ go 1.26.5
 require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/shirou/gopsutil/v4 v4.26.7
+	golang.org/x/sys v0.47.0
+	golang.org/x/term v0.45.0
 )
 
 require (
@@ -26,5 +28,4 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/sys v0.41.0 // indirect
 )

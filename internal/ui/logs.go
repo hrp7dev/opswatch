@@ -3,55 +3,47 @@ package ui
 import (
 	"fmt"
 	"strings"
-	"time"
+
+	"github.com/charmbracelet/lipgloss"
+	"github.com/hrp7dev/opswatch/internal/system"
 )
 
-type LogEntry struct {
-	Timestamp time.Time
-	Level     string
-	Message   string
-}
+func RenderLogs(limit int) string {
+	logs := system.GetSystemLogs(limit)
 
-var logHistory []LogEntry
-
-func AddLog(level, message string) {
-	if len(logHistory) >= 20 {
-		logHistory = logHistory[1:]
-	}
-	logHistory = append(logHistory, LogEntry{
-		Timestamp: time.Now(),
-		Level:     strings.ToUpper(level),
-		Message:   message,
-	})
-}
-
-func RenderLogs(maxLines int) string {
-	entries := logHistory
-	if len(entries) > maxLines {
-		entries = entries[len(entries)-maxLines:]
-	}
-	if len(entries) == 0 {
-		return infoStyle.Render("No logs yet. Waiting for activity...")
+	if len(logs) == 0 {
+		return infoStyle.Render("No system logs")
 	}
 
 	var rows []string
-	for _, entry := range entries {
-		timestamp := entry.Timestamp.Format("15:04:05")
+
+	for _, log := range logs {
+
 		levelStyle := successStyle
-		switch entry.Level {
-		case "ERROR", "ERR":
+
+		switch log.Level {
+		case "ERROR":
 			levelStyle = dangerStyle
-		case "WARN", "WARNING":
+		case "WARN":
 			levelStyle = warningStyle
 		}
 
-		rows = append(rows, fmt.Sprintf(
-			"%s %s %s",
-			subtitleStyle.Render(timestamp),
-			levelStyle.Render(entry.Level),
-			entry.Message,
-		))
+		rows = append(rows,
+			fmt.Sprintf(
+				"%s %s",
+				levelStyle.Render(padLogCell(log.Level, 7)),
+				log.Message,
+			),
+		)
 	}
 
 	return strings.Join(rows, "\n")
+}
+
+func padLogCell(value string, width int) string {
+	if lipgloss.Width(value) >= width {
+		return value
+	}
+
+	return value + strings.Repeat(" ", width-lipgloss.Width(value))
 }
