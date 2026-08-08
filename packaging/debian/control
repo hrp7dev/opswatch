@@ -1,0 +1,7 @@
+Package: opswatch
+Version: 0.1.13
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: hrp7dev
+Description: Lightweight Linux server monitoring dashboard CLI
