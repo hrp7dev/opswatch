@@ -7,7 +7,7 @@
 ![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?logo=go&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Linux%20amd64-333333?logo=linux&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-brightgreen)
-![Release](https://img.shields.io/badge/release-v0.1.1-blueviolet)
+![Release](https://img.shields.io/badge/release-v0.1.2-blueviolet)
 
 ---
 
