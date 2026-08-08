@@ -6,7 +6,8 @@ import "fmt"
 // Nothing that happens here touches the user's normal scrollback history —
 // when we leave, everything is restored exactly as it was.
 func EnterAltScreen() {
-	fmt.Print("\x1b[?1049h")
+	fmt.Print("\033[?1049h")
+	fmt.Print("\033[?25l")
 	hideCursor()
 }
 
@@ -14,7 +15,8 @@ func EnterAltScreen() {
 // Always call this before the program exits (including on Ctrl+C / q).
 func ExitAltScreen() {
 	showCursor()
-	fmt.Print("\x1b[?1049l")
+	fmt.Print("\033[?25h")
+	fmt.Print("\033[?1049l")
 }
 
 func hideCursor() {
@@ -29,5 +31,5 @@ func showCursor() {
 // Using cursor-home instead of scrolling means the dashboard is always
 // redrawn in place, with no scroll-back growth.
 func Clear() {
-	fmt.Print("\x1b[H\x1b[2J")
+	fmt.Print("\033[H")
 }
