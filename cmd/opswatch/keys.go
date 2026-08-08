@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"golang.org/x/sys/unix"
@@ -8,20 +9,17 @@ import (
 	"github.com/hrp7dev/opswatch/internal/ui"
 )
 
-// listenKeys puts stdin into "cbreak" mode: no line buffering, no echo —
-// but OPOST stays ON, so newlines still render correctly and the dashboard
-// doesn't get garbled like it does under full raw mode.
 func listenKeys() {
 	fd := int(os.Stdin.Fd())
 
 	oldState, err := unix.IoctlGetTermios(fd, ioctlGetTermios)
 	if err != nil {
-		// Not a real terminal (e.g. pipe/CI) — skip silently.
 		return
 	}
 
 	newState := *oldState
-	newState.Lflag &^= unix.ICANON | unix.ECHO
+	newState.Lflag &^= unix.ICANON | unix.ECHO | unix.ISIG
+	newState.Iflag &^= unix.IXON
 	newState.Cc[unix.VMIN] = 1
 	newState.Cc[unix.VTIME] = 0
 
@@ -30,11 +28,22 @@ func listenKeys() {
 	}
 	defer unix.IoctlSetTermios(fd, ioctlSetTermios, oldState)
 
+	debugLog, _ := os.OpenFile("/tmp/opswatch_keys.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	defer func() {
+		if debugLog != nil {
+			debugLog.Close()
+		}
+	}()
+
 	buf := make([]byte, 3)
 	for {
 		n, err := os.Stdin.Read(buf)
 		if err != nil || n == 0 {
 			continue
+		}
+
+		if debugLog != nil {
+			fmt.Fprintf(debugLog, "n=%d bytes=%v\n", n, buf[:n])
 		}
 
 		switch {
@@ -51,6 +60,9 @@ func listenKeys() {
 			ui.PrevDockerPage()
 
 		case buf[0] == 'q', buf[0] == 3: // 'q' or Ctrl+C
+			if debugLog != nil {
+				fmt.Fprintf(debugLog, "EXIT TRIGGERED by byte %d\n", buf[0])
+			}
 			unix.IoctlSetTermios(fd, ioctlSetTermios, oldState)
 			ui.ExitAltScreen()
 			os.Exit(0)
