@@ -164,7 +164,7 @@ func RenderDashboard(cpuUsage float64, memory system.MemoryStats, disk system.Di
 					creatorLabelStyle.Render("Created by "),
 					creatorStyle.Render(
 						terminalLink(
-							"hrp7dev",
+							"Hrp7dev",
 							"https://github.com/hrp7dev",
 						),
 					),
