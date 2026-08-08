@@ -1,0 +1,36 @@
+# binaries
+
+*.exe
+*.deb
+*.bin
+
+# build
+
+build/
+dist/
+
+# go
+
+vendor/
+
+# editor
+
+.idea/
+.vscode/
+
+# mac
+
+.DS_Store
+
+# logs
+
+*.log
+
+# temp
+
+*.tmp
+*.swp
+
+# docs
+
+docs/
